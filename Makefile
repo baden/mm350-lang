@@ -10,6 +10,7 @@ SRVDIR=~/www/files/$(TARGET)/lang/$(LANG)/amr/
 
 FFMPEG := ffmpeg
 MKDIR := mkdir -p
+MAKELIST := python ./makelist2.py
 
 # all: amrlist.dat
 
@@ -32,8 +33,8 @@ $(BUILD_PATH)/amr/%.amr: wav/$(LANG)/%.wav
 	@$(MKDIR) $(dir $@)
 	@$(FFMPEG) -i $< $(FFMPEG_FLAGS) $@
 
-$(AMR_DAT_FILE): amrlist.txt Makefile makelist2.py $(AMR_FILES)
-	python ./makelist2.py $< $@ $(BUILD_PATH)/amr
+$(AMR_DAT_FILE): amrlist-$(LANG).txt Makefile makelist2.py $(AMR_FILES)
+	$(MAKELIST) $< $@ $(BUILD_PATH)/amr
 
 clean:
 	@rm -f $(AMR_DAT_FILE) $(AMR_FILES)
