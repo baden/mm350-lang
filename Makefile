@@ -43,3 +43,4 @@ upload: $(AMR_DAT_FILE) $(AMR_FILES)
 	@echo Upload to $(SERVER):$(SRVDIR)
 	@ssh $(SERVER) rm -f $(SRVDIR)/*
 	@scp $(BUILD_PATH)/amr/*.amr $(BUILD_PATH)/amr.dat $(SERVER):$(SRVDIR)
+	ssh $(SERVER) ln -sf $(SRVDIR) $(SRVDIR)../ua
