@@ -1,14 +1,14 @@
 .PHONY: all clean upload show
 
 TARGET := mm352-00
-# LANG := ru
-LANG := vi_VN
+LANG := ru
+# LANG := vi_VN
 SERVER=baden@het.navi.cc
 
 BUILD_PATH := ./build/$(LANG)
 # FFMPEG_GAIN_vi_VN := -af "volume=3.0"
 # FFMPEG_END_PAUSE_vi_VN := -i wav/end_pause.wav
-FFMPEG_FLAGS := -acodec libopencore_amrnb -ab 12.2k -ac 1 -ar 8k -y $(FFMPEG_GAIN_$(LANG))
+FFMPEG_FLAGS := -acodec libopencore_amrnb -ab 5.15k -ac 1 -ar 8k -y $(FFMPEG_GAIN_$(LANG))
 SRVDIR=~/www/files/$(TARGET)/lang/$(LANG)/amr/
 
 FFMPEG := ffmpeg
