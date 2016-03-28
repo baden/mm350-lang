@@ -8,7 +8,7 @@ SERVER=baden@het.navi.cc
 BUILD_PATH := ./build/$(LANG)
 # FFMPEG_GAIN_vi_VN := -af "volume=3.0"
 # FFMPEG_END_PAUSE_vi_VN := -i wav/end_pause.wav
-FFMPEG_FLAGS := -acodec libopencore_amrnb -ab 5.15k -ac 1 -ar 8k -y $(FFMPEG_GAIN_$(LANG))
+FFMPEG_FLAGS := -acodec libopencore_amrnb -ab 1.8k -ac 1 -ar 8k -y $(FFMPEG_GAIN_$(LANG))
 SRVDIR=~/www/files/$(TARGET)/lang/$(LANG)/amr/
 
 FFMPEG := ffmpeg
