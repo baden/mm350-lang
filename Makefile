@@ -1,8 +1,8 @@
 .PHONY: all clean upload show
 
 TARGET := mm352-00
-LANG := ru
-# LANG := vi_VN
+# LANG := ru
+LANG := vi_VN
 SERVER=baden@het.navi.cc
 
 BUILD_PATH := ./build/$(LANG)
