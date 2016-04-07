@@ -1,51 +1,79 @@
 .PHONY: all clean upload show
 
-TARGET := mm352-00
-LANG := ru
-# LANG := vi_VN
-SERVER=baden@het.navi.cc
+# TARGET := mm352-00
+# TARGET := mm350-01R-ru
+# LANG := ru
+# LANG := vi
 
-BUILD_PATH := ./build/$(LANG)
-# FFMPEG_GAIN_vi_VN := -af "volume=3.0"
-# FFMPEG_END_PAUSE_vi_VN := -i wav/end_pause.wav
-FFMPEG_FLAGS := -acodec libopencore_amrnb -ab 1.8k -ac 1 -ar 8k -y $(FFMPEG_GAIN_$(LANG))
-SRVDIR=~/www/files/$(TARGET)/lang/$(LANG)/amr/
+all:: target
 
-FFMPEG := ffmpeg
-MKDIR := mkdir -p
-MAKELIST := python ./makelist2.py
+TARGETS_ALL := $(filter-out target,$(patsubst %.Makefile,%,$(wildcard *.Makefile)))
 
-# all: amrlist.dat
+ifneq ($(TARGET),)
 
-# amrlist.dat: amrlist.txt Makefile makelist.py
-# 	python ./makelist.py $< $@
+TARGETS := $(TARGET)
 
-WAV_FILES := $(filter-out %end_pause.wav, $(wildcard wav/$(LANG)/*.wav))
-AMR_FILES := $(patsubst wav/$(LANG)/%,$(BUILD_PATH)/amr/%,$(WAV_FILES:wav=amr))
-AMR_DAT_FILE := $(BUILD_PATH)/amr.dat
+else
 
-all: $(AMR_FILES) $(AMR_DAT_FILE)
+TARGETS ?= $(TARGETS_ALL)
 
-show:
-	@echo WAV_FILES = $(WAV_FILES)
-	@echo AMR_FILES = $(AMR_FILES)
-	@echo AMR_DAT = $(AMR_DAT_FILE)
+endif
 
-$(BUILD_PATH)/amr/%.amr: wav/$(LANG)/%.wav
-	@echo Convert $< to $@
-	@$(MKDIR) $(dir $@)
-	@$(FFMPEG) -i $< $(FFMPEG_FLAGS) $@
-	# $(FFMPEG) -i $< -i wav/$(LANG)/end_pause.wav -filter_complex "aeval=val(ch)/2:c=same;concat=n=2:v=0:a=1" $(FFMPEG_FLAGS) $@
+targets:
+	@echo "TARGETS=$(TARGETS)"
 
-$(AMR_DAT_FILE): amrlist-$(LANG).txt Makefile makelist2.py $(AMR_FILES)
-	$(MAKELIST) $< $@ $(BUILD_PATH)/amr
+## COLORS #################
 
-clean:
-	@rm -f $(AMR_DAT_FILE) $(AMR_FILES)
+RESET       = $(shell tput sgr0)
+#$(shell )
+BLACK       = $(shell tput setaf 0)
+BLACK_BG    = $(shell tput setab 0)
+DARKGREY    = $(shell tput setaf 0; tput bold)
+RED         = $(shell tput setaf 1)
+RED_BG      = $(shell tput setab 1)
+LIGHTRED    = $(shell tput setaf 1; tput bold)
+GREEN       = $(shell tput setaf 2)
+GREEN_BG    = $(shell tput setab 2)
+LIME        = $(shell tput setaf 2; tput bold)
+BROWN       = $(shell tput setaf 3)
+BROWN_BG    = $(shell tput setab 3)
+YELLOW      = $(shell tput setaf 3; tput bold)
+BLUE        = $(shell tput setaf 4)
+BLUE_BG     = $(shell tput setab 4)
+BRIGHTBLUE  = $(shell tput setaf 4; tput bold)
+PURPLE      = $(shell tput setaf 5)
+PURPLE_BG   = $(shell tput setab 5)
+PINK        = $(shell tput setaf 5; tput bold)
+CYAN        = $(shell tput setaf 6)
+CYAN_BG     = $(shell tput setab 6)
+BRIGHTCYAN  = $(shell tput setaf 6; tput bold)
+LIGHTGREY   = $(shell tput setaf 7)
+LIGHTGREYBG = $(shell tput setab 7)
+WHITE       = $(shell tput setaf 7; tput bold)
 
-upload: $(AMR_DAT_FILE) $(AMR_FILES)
-	@echo Upload to $(SERVER):$(SRVDIR)
-	@ssh $(SERVER) rm -f $(SRVDIR)/*
-	@ssh $(SERVER) mkdir -p $(SRVDIR)
-	@scp $(BUILD_PATH)/amr/*.amr $(BUILD_PATH)/amr.dat $(SERVER):$(SRVDIR)
-	#ssh $(SERVER) ln -sf $(SRVDIR)../ $(SRVDIR)../../ua
+define for_all_targets
+	@for target in $(TARGETS) ; do \
+		echo "${GREEN_BG}:$$target${RESET}" && \
+		$(MAKE) -j5 -f $$target.Makefile --no-print-directory $(1) || exit $$?; \
+	done
+endef
+
+COMMANDS := target clean upload
+
+define translate
+$1::
+	$$(call for_all_targets, $1)
+endef
+
+$(foreach command,$(COMMANDS),$(eval $(call translate,$(command))))
+
+#
+# use this like:
+# 'make print-PATH print-CFLAGS make print-ALL_OBJS'
+# to see the value of make variable PATH and CFLAGS, ALL_OBJS, etc.
+#
+print-%:
+	@echo $* is $($*)
+
+printto-%::
+	$(call for_all_targets, print-$*)
