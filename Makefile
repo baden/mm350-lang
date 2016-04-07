@@ -1,10 +1,5 @@
 .PHONY: all clean upload show
 
-# TARGET := mm352-00
-# TARGET := mm350-01R-ru
-# LANG := ru
-# LANG := vi
-
 all:: target
 
 TARGETS_ALL := $(filter-out target,$(patsubst %.Makefile,%,$(wildcard *.Makefile)))
